@@ -27,11 +27,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import Calendar from "./Calendar.vue";
-import History from "./History.vue";
-import ModalEntries from "./ModalEntries.vue";
-import RegisterMood from "./RegisterMood.vue";
-import Header from "./Header.vue";
+import Calendar from "../components/Calendar.vue";
+import History from "../components/History.vue";
+import ModalEntries from "../components/ModalEntries.vue";
+import RegisterMood from "../components/RegisterMood.vue";
+import Header from "../components/Header.vue";
 
 // Estado
 const entries = ref([]);

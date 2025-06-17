@@ -6,10 +6,8 @@
 
 <script setup>
 import {ref, computed} from "vue"
-import LoginPage from "./components/LoginPage.vue"
-import Home from "./components/Home.vue"
-// import HelloWorld from './components/HelloWorld.vue'
-// import TheWelcome from './components/TheWelcome.vue'
+import LoginPage from "./pages/Login.vue"
+import Home from "./pages/Home.vue"
 
 const routes = {
   '/': Home,
