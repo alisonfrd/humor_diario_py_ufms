@@ -21,9 +21,13 @@
 </template>
 
 <script setup>
+import { useHistoryStore } from '@/store/useHistoryStore';
 import { computed, ref } from 'vue'
+ const emit = defineEmits(['viewEntry']);
 // Dias do calendário
-const entries = ref([]);
+const historyStore = useHistoryStore();
+
+const entries = computed(() => historyStore.getEntries)
 
 const calendarDays = computed(() => {
   const today = new Date();
@@ -73,7 +77,12 @@ const calendarDays = computed(() => {
   return days;
 });
 
-function findEntryByDate(date) {
+function findEntryByDate(date) {  
   return entries.value.find(entry => entry.date === date);
 }
+
+function viewEntry(entrie){
+  emit('viewEntry', entrie)
+}
+
 </script>

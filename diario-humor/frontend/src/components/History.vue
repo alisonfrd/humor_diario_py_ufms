@@ -8,7 +8,7 @@
             v-for="entry in entries.slice(0, 5)" 
             :key="entry.id" 
             class="bg-gray-700/50 p-3 rounded-md hover:bg-gray-700 cursor-pointer"
-            @click="viewEntry(entry)"
+             @click="viewEntry(entry)"
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -25,11 +25,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const entries = ref([])
+import { useHistoryStore } from '@/store/useHistoryStore';
+import { ref, computed } from 'vue'
+
+const emit = defineEmits(['viewEntry']);
+
+const historyStore = useHistoryStore();
+const entries = computed(() => historyStore.getEntries);
+
+function formatEntryDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR', { 
+    weekday: 'short', 
+    day: 'numeric', 
+    month: 'short' 
+  });
+}
+
+function deleteEntry(id: number) {
+  historyStore.removeEntrie(id);
+  // const  = entries.value.filter(entry => entry.id !== id);
+ 
+  
+  // if (viewingEntry.value && viewingEntry.value.id === id) {
+  //   viewingEntry.value = null;
+  // }
+}
+
+function viewEntry(entrie){
+  emit('viewEntry', entrie)
+}
+
 // interface Config {
 //     entries: []
 // }
 
 // const props = defineProps<Config>();
+
 </script>

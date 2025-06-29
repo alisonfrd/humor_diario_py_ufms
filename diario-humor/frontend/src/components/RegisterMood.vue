@@ -8,7 +8,7 @@
             v-for="mood in moods" 
             :key="mood.value" 
             @click="selectMood(mood)"
-            class="mood-btn p-3 rounded-full text-3xl transition-transform hover:scale-110"
+            class="mood-btn flex justify-center p-3 rounded-full text-3xl transition-transform hover:scale-110 cursor-pointer"
             :class="{ 'ring-2 ring-purple-400 ring-offset-2 ring-offset-gray-800 scale-110': selectedMood === mood.value }"
           >
             {{ mood.emoji }}
@@ -30,7 +30,7 @@
         <!-- Submit Button -->
         <button 
           @click="saveEntry" 
-          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer transition-colors"
           :disabled="!selectedMood"
         >
           Salvar Registro
@@ -39,7 +39,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useHistoryStore } from '@/store/useHistoryStore';
+import { computed, ref } from 'vue'
+
+const historyStore = useHistoryStore();
 // Lista de humores disponíveis
 const moods = [
   { value: 'feliz', emoji: '😄', color: 'bg-yellow-500' },
@@ -51,6 +54,7 @@ const moods = [
 
 const selectedMood = ref('');
 const description = ref('');
+const entries = computed(() => historyStore.getEntries);
 
 // Funções
 function selectMood(mood) {
@@ -73,14 +77,15 @@ function saveEntry() {
   
   // Verificar se já existe uma entrada para hoje
   const todayEntry = entries.value.findIndex(e => e.date === newEntry.date);
+  let updatedEntries = [...entries.value];
   if (todayEntry !== -1) {
-    entries.value[todayEntry] = newEntry;
+    // Atualiza a entrada existente
+    updatedEntries[todayEntry] = newEntry;
   } else {
-    entries.value.unshift(newEntry);
+    // Adiciona nova entrada no início
+    updatedEntries.unshift(newEntry);
   }
-  
-  // Salvar no localStorage
-  localStorage.setItem('moodEntries', JSON.stringify(entries.value));
+  historyStore.setEntrie(updatedEntries);
   
   // Limpar formulário
   selectedMood.value = '';

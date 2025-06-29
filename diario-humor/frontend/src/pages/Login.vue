@@ -1,8 +1,8 @@
 <template>
-  <div class="min-w-screen min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
+  <div class="absolute top-0 min-w-screen min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
     <div class="w-full max-w-md space-y-6">
       <!-- Header com mensagem motivacional -->
-      <div class="text-center space-y-4">
+      <div class="text-center space-y-4" style="margin-bottom: 8px;">
         <div class="flex justify-center items-center gap-2 mb-4">
           <div class="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full">
             <Heart class="w-6 h-6 text-white" />
@@ -15,6 +15,7 @@
         <div
           class="bg-purple-800/30 backdrop-blur-sm rounded-2xl p-4 border border-purple-500/30 cursor-pointer transition-all hover:bg-purple-800/40"
           @click="changeMessage"
+          style="margin-top: 8px;"
         >
           <div class="flex items-center justify-center gap-2 text-purple-200">
             <Sparkles class="w-4 h-4" />
@@ -46,7 +47,7 @@
               />
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 mb-2">
               <label for="password" class="text-gray-200 font-medium">Senha</label>
               <input
                 id="password"
@@ -60,7 +61,8 @@
 
             <button
               type="submit"
-              class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2.5 transition-all duration-200 rounded"
+              class="w-full bg-gradient-to-r from-purple-500 to-purple-700/30 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2.5 transition-all duration-200 rounded cursor-pointer"
+              style="margin-top: 12px;"
               :disabled="isLoading"
             >
               <div v-if="isLoading" class="flex items-center gap-2 justify-center">
@@ -68,13 +70,13 @@
                 Entrando...
               </div>
               <div v-else class="flex items-center gap-2 justify-center">
-                <Sun class="w-4 h-4" />
+                <!-- <Sun class="w-4 h-4" /> -->
                 Entrar
               </div>
             </button>
           </form>
 
-          <div class="mt-6 text-center space-y-3">
+          <div class="mt-6 text-center space-y-3" style="margin: 16px 0 16px 0">
             <button class="text-sm text-purple-300 hover:text-purple-200 transition-colors">
               Esqueceu sua senha?
             </button>
@@ -91,7 +93,7 @@
       <!-- Footer inspiracional -->
       <div class="text-center">
         <p class="text-sm text-gray-400">
-          "O primeiro passo para mudar o mundo é mudar a si mesmo" ✨
+          <!-- "O primeiro passo para mudar o mundo é mudar a si mesmo" ✨ -->
         </p>
       </div>
     </div>
@@ -101,7 +103,10 @@
 <script setup>
 import { ref } from "vue"
 import { Heart, Sparkles, Sun } from "lucide-vue-next"
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+  
 const username = ref("")
 const password = ref("")
 const isLoading = ref(false)
@@ -125,6 +130,7 @@ const handleSubmit = async () => {
   isLoading.value = true
   await new Promise(resolve => setTimeout(resolve, 1500))
   isLoading.value = false
+  window.location.href = '/'
   // lógica real de autenticação entraria aqui
 }
 </script>
