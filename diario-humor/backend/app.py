@@ -12,16 +12,10 @@ def create_app():
     jwt.init_app(app)
 
     from models import user, diary
-
     from routes.auth_routes import auth_bp
     from routes.diary_routes import diary_bp
-    
-    
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(diary_bp)
 
     return app
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, host='0.0.0.0')
