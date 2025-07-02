@@ -1,145 +1,159 @@
+# Diário do Humor - API Documentation
 
-# 📚 Documentação da API – Diário de Humor
-
-Todas as rotas do diário exigem autenticação via JWT:
-
-```
-Authorization: Bearer <token>
-```
-
-> Use um token JWT fictício para testes.
+Esta API fornece os recursos de autenticação e manipulação de entradas de diário pessoal. Ela é utilizada por um frontend (Vue.js) para interações com o usuário. O backend é executado em Flask, e o ambiente pode ser iniciado completamente via Docker.
 
 ---
 
-## 1. Criar nova entrada do diário
+## 🔐 Autenticação (`/auth`)
 
-**Endpoint:**  
-`POST /diary/`
+### 📥 Registrar usuário
 
-**Request:**
+**Endpoint**: `POST /auth/register`
 
-```json
-{
-  "text": "Dia de estudo intenso para a faculdade!",
-  "mood": "focado",
-  "entry_date": "2024-06-12"
-}
-```
-
-**Response (201 Created):**
+**Payload JSON**:
 
 ```json
 {
-  "message": "Entrada criada com sucesso."
+  "name": "João",
+  "email": "joao@email.com",
+  "password": "123456"
 }
 ```
 
-**Erros possíveis:**
+**Respostas**:
 
-- `400 Bad Request`: Campos obrigatórios faltando ou data inválida
-- `409 Conflict`: Já existe entrada para essa data
+- `201`: Usuário registrado com sucesso.
+- `409`: Email já cadastrado.
 
 ---
 
-## 2. Listar todas as entradas do usuário
+### 🔑 Login
 
-**Endpoint:**  
-`GET /diary/`
+**Endpoint**: `POST /auth/login`
 
-**Request:**  
-Apenas o header `Authorization`.
+**Payload JSON**:
 
-**Response (200 OK):**
+```json
+{
+  "email": "joao@email.com",
+  "password": "123456"
+}
+```
+
+**Resposta (200)**:
+
+```json
+{
+  "access_token": "JWT_TOKEN"
+}
+```
+
+---
+
+## 📓 Entradas de Diário (`/diary`)
+
+Todos os endpoints abaixo exigem o token JWT retornado no login, enviado no cabeçalho:
+
+```
+Authorization: Bearer <access_token>
+```
+
+### 🆕 Criar entrada
+
+**Endpoint**: `POST /diary/`
+
+**Payload JSON**:
+
+```json
+{
+  "text": "Hoje me senti muito bem.",
+  "mood": "feliz",
+  "entry_date": "2024-06-10"
+}
+```
+
+**Respostas**:
+
+- `201`: Entrada criada com sucesso.
+- `400`: Dados faltando ou formato inválido.
+- `409`: Já existe entrada para esta data.
+
+---
+
+### 📄 Listar entradas
+
+**Endpoint**: `GET /diary/`
+
+**Resposta (200)**:
 
 ```json
 [
   {
     "id": 1,
-    "text": "Dia de estudo intenso para a faculdade!",
-    "mood": "focado",
-    "entry_date": "2024-06-12",
-    "created_at": "2024-06-12T10:24:13.000Z"
-  },
-  {
-    "id": 2,
-    "text": "Fui ao parque e relaxei.",
-    "mood": "tranquilo",
-    "entry_date": "2024-06-11",
-    "created_at": "2024-06-11T14:00:01.000Z"
+    "text": "Hoje me senti muito bem.",
+    "mood": "feliz",
+    "entry_date": "2024-06-10",
+    "created_at": "2024-06-10T14:00:00"
   }
 ]
 ```
 
 ---
 
-## 3. Editar uma entrada do diário
+### ✏️ Atualizar entrada
 
-**Endpoint:**  
-`PUT /diary/<entry_id>`
+**Endpoint**: `PUT /diary/<entry_id>`
 
-**Request:**
-
-```json
-{
-  "text": "Atualizei meu dia!",
-  "mood": "animado",
-  "entry_date": "2024-06-12"
-}
-```
-
-**Response (200 OK):**
+**Payload JSON** (parcial ou completo):
 
 ```json
 {
-  "message": "Entrada atualizada com sucesso."
+  "text": "Atualizei meu humor.",
+  "mood": "motivado",
+  "entry_date": "2024-06-11"
 }
 ```
 
-**Erros possíveis:**
+**Respostas**:
 
-- `404 Not Found`: Entrada não encontrada
-- `409 Conflict`: Já existe outra entrada nesta data
+- `200`: Entrada atualizada.
+- `404`: Entrada não encontrada.
+- `409`: Já existe outra entrada nesta data.
 
 ---
 
-## 4. Excluir uma entrada do diário
+### ❌ Excluir entrada
 
-**Endpoint:**  
-`DELETE /diary/<entry_id>`
+**Endpoint**: `DELETE /diary/<entry_id>`
 
-**Request:**  
-Apenas o header `Authorization`.
+**Resposta**:
 
-**Response (200 OK):**
+- `200`: Entrada excluída com sucesso.
+- `404`: Entrada não encontrada.
 
-```json
-{
-  "message": "Entrada excluída com sucesso."
-}
+---
+
+## ✅ Testes Locais via Docker
+
+Após rodar `docker-compose up`, você poderá acessar:
+
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend**: `http://localhost:5001`
+
+Para testar os endpoints via Postman ou similar, use:
+
+```
+http://localhost:5001/auth/...
+http://localhost:5001/diary/...
 ```
 
-**Erros possíveis:**
+---
 
-- `404 Not Found`: Entrada não encontrada
+## 🐳 Observações
+
+- Use o token JWT do login em todas as requisições protegidas.
+- Certifique-se de que o banco de dados foi inicializado corretamente.
 
 ---
 
-## Resumo dos endpoints
-
-| Método | Rota                | Descrição                 |
-|--------|---------------------|---------------------------|
-| POST   | `/diary/`           | Cria nova entrada         |
-| GET    | `/diary/`           | Lista todas as entradas   |
-| PUT    | `/diary/<entry_id>` | Edita uma entrada         |
-| DELETE | `/diary/<entry_id>` | Exclui uma entrada        |
-
----
-
-### Fluxo sugerido para testes no frontend
-
-1. **Login fictício**: gere ou use um JWT fake.
-2. **Criar entrada**: simule o retorno conforme exemplos.
-3. **Listar entradas**: use um array mock igual ao exemplo.
-4. **Editar** e **excluir**: simule os retornos conforme acima.
-
----
+Feito com 💙 para a integração Vue.js + Flask.
