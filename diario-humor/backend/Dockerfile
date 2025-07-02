@@ -26,4 +26,4 @@ EXPOSE 5000
 COPY entrypoint.sh .
 
 # 8. Comando para iniciar o servidor Flask
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
