@@ -26,16 +26,29 @@
         </div>
       </div>
 
-      <!-- Card de Login -->
+      <!-- Cards -->
       <div class="border border-purple-500/20 shadow-2xl bg-gray-800/80 backdrop-blur-sm rounded-xl overflow-hidden">
+
         <div class="text-center pb-4 pt-6 px-6">
-          <h2 class="text-xl text-white font-semibold">Bem-vindo de volta!</h2>
-          <p class="text-gray-300">Entre para continuar sua jornada de autoconhecimento</p>
+          <h2 class="text-xl text-white font-semibold">{{ step === 1 ? 'Bem-vindo de volta!' : 'Realize seu cadastro!' }}</h2>
+          <p class="text-gray-300" v-if="step === 1">Entre para continuar sua jornada de autoconhecimento</p>
         </div>
 
         <div class="px-6 pb-6">
           <form @submit.prevent="handleSubmit" class="space-y-4">
-            <div class="space-y-2">
+             <div v-if="step === 2" class="space-y-2">
+              <label for="name" class="text-gray-200 font-medium">Nome</label>
+              <input
+                id="name"
+                v-model="name"
+                type="name"
+                placeholder="Digite seu nome"
+                class="w-full bg-gray-700/50 border border-purple-400/30 focus:border-purple-400 focus:ring-purple-400 text-white placeholder:text-gray-400 rounded px-3 py-2"
+                :required="step === 2"
+              />
+            </div>
+
+            <div class="space-y-2 mb-2">
               <label for="email" class="text-gray-200 font-medium">Email</label>
               <input
                 id="email"
@@ -77,15 +90,18 @@
           </form>
 
           <div class="mt-6 text-center space-y-3" style="margin: 16px 0 16px 0">
-            <button class="text-sm text-purple-300 hover:text-purple-200 transition-colors">
+            <!-- <button class="text-sm text-purple-300 hover:text-purple-200 transition-colors">
               Esqueceu sua senha?
-            </button>
-            <div class="text-sm text-gray-300">
+            </button> -->
+            <div v-if="step === 1" class="text-sm text-gray-300">
               Não tem uma conta?
-              <button class="text-purple-300 hover:text-purple-200 font-medium transition-colors">
+              <button @click="step = 2" class="cursor-pointer text-purple-300 hover:text-purple-200 font-medium transition-colors">
                 Cadastre-se aqui
               </button>
             </div>
+            <button v-else @click="step = 1" class="cursor-pointer text-purple-300 hover:text-purple-200 font-medium transition-colors">
+              Voltar para login
+            </button>
           </div>
         </div>
       </div>
@@ -110,7 +126,9 @@ const router = useRouter()
   
 const email = ref("")
 const password = ref("")
+const name = ref("")
 const isLoading = ref(false)
+const step = ref(1);
 
 const motivationalMessages = [
   "Suas emoções são suas amigas 💜",
@@ -130,9 +148,11 @@ const changeMessage = () => {
 const handleSubmit = async () => {
   isLoading.value = true
   await new Promise(resolve => setTimeout(resolve, 1500))
+  const endpoint = step.value === 1 ? '/auth/login' : '/auth/register'
 
   try {
-    const response = await api.post('/auth/login', {
+    const response = await api.post(endpoint, {
+      name: name.value,
       email: email.value,
       password: password.value
     })
@@ -144,6 +164,7 @@ const handleSubmit = async () => {
     }
   } catch (err) {
     console.error(err)
+    isLoading.value = false
   }
   // lógica real de autenticação entraria aqui
 }
