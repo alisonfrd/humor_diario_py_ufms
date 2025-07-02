@@ -1,25 +1,8 @@
 <template>
   <div class="flex justify-center items-center">
-    <component :is="currentView" />
+    <router-view />
   </div>
 </template>
-
-<script setup>
-import {ref, computed} from "vue"
-import LoginPage from "./pages/Login.vue"
-import Home from "./pages/Home.vue"
-
-const routes = {
-  '/': Home,
-  '/login': LoginPage
-}
-
-const currentView = computed(() => {
-  const currentPath = window.location.pathname;
-  
-  return routes[currentPath]
-})
-</script>
 
 <style scoped>
 header {

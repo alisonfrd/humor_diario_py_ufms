@@ -36,12 +36,12 @@
         <div class="px-6 pb-6">
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div class="space-y-2">
-              <label for="username" class="text-gray-200 font-medium">Usuário</label>
+              <label for="email" class="text-gray-200 font-medium">Email</label>
               <input
-                id="username"
-                v-model="username"
+                id="email"
+                v-model="email"
                 type="text"
-                placeholder="Digite seu usuário"
+                placeholder="Digite seu email"
                 class="w-full bg-gray-700/50 border border-purple-400/30 focus:border-purple-400 focus:ring-purple-400 text-white placeholder:text-gray-400 rounded px-3 py-2"
                 required
               />
@@ -104,10 +104,11 @@
 import { ref } from "vue"
 import { Heart, Sparkles, Sun } from "lucide-vue-next"
 import { useRouter } from 'vue-router'
+import api from '@/services/axios'
 
 const router = useRouter()
   
-const username = ref("")
+const email = ref("")
 const password = ref("")
 const isLoading = ref(false)
 
@@ -129,8 +130,21 @@ const changeMessage = () => {
 const handleSubmit = async () => {
   isLoading.value = true
   await new Promise(resolve => setTimeout(resolve, 1500))
-  isLoading.value = false
-  window.location.href = '/'
+
+  try {
+    const response = await api.post('/auth/login', {
+      email: email.value,
+      password: password.value
+    })
+    console.log(response.data)
+
+    if(response.data){
+      isLoading.value = false
+      window.location.href = '/'
+    }
+  } catch (err) {
+    console.error(err)
+  }
   // lógica real de autenticação entraria aqui
 }
 </script>
