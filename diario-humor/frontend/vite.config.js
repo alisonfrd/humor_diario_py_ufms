@@ -17,4 +17,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    host: true, // <--- permite acesso via IP/localhost
+    port: 3000,
+    watch: {
+      usePolling: true // útil para hot reload funcionar no Docker
+    }
+  }
 })
