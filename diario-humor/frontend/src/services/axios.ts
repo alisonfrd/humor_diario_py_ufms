@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // Cria instância com baseURL
 const api = axios.create({
-  baseURL: 'http://localhost:5000', // backend
+  baseURL: 'http://localhost:5001', // backend
   timeout: 10000
 })
 
