@@ -158,21 +158,27 @@ const handleSubmit = async () => {
       password: password.value
     })
 
-    if(response.data?.access_token) {
-      console.log('oi');
-      
+    if (step.value === 2) {
+      const loginResponse = await api.post('/auth/login', {
+        email: email.value,
+        password: password.value
+      })
+      if (loginResponse.data?.access_token) {
+        userStore.setToken(loginResponse.data.access_token)
+        router.push('/Home')
+        isLoading.value = false
+        return
+      }
+    } else if (response.data?.access_token) {
       userStore.setToken(response.data.access_token)
-      console.log('Token armazenado:', userStore.getToken);
-      
-      console.log(router);
-      
       router.push('/Home')
       isLoading.value = false
+      return
     }
+    isLoading.value = false
   } catch (err) {
     console.error(err)
     isLoading.value = false
   }
-  // lógica real de autenticação entraria aqui
 }
 </script>
