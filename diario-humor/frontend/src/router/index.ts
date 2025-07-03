@@ -3,11 +3,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import Login from '@/pages/Login.vue'
 import { computed } from 'vue'
+import { useUserStore } from '@/store/useUserStore'
 
 const routes = [
   {
-    path: '/',
-    redirect: '/Home', // redireciona raiz para home
+     path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
+    name: 'Home', // redireciona raiz para home
     component: Home,
      meta: { requiresAuth: true }
   },
@@ -27,12 +32,12 @@ const router = createRouter({
   routes
 })
 
-function isAuthenticated() {
-  return !!localStorage.getItem('token') // ou outro indicador, como 'user'
-}
-
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  const storeUser = useUserStore()
+  const isAuthenticated = storeUser.getToken
+  console.log(`Verificando autenticação: ${isAuthenticated}`)
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'Login' })
   } else {
     next()

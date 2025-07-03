@@ -41,6 +41,7 @@
 <script setup>
 import { useHistoryStore } from '@/store/useHistoryStore';
 import { computed, ref } from 'vue'
+import api from '@/services/axios';
 
 const historyStore = useHistoryStore();
 // Lista de humores disponíveis
@@ -67,25 +68,36 @@ function saveEntry() {
   const mood = moods.find(m => m.value === selectedMood.value);
   
   const newEntry = {
-    id: Date.now().toString(),
-    date: new Date().toISOString().split('T')[0],
+    entry_date: new Date().toISOString().split('T')[0],
     mood: mood.emoji,
-    moodValue: selectedMood.value,
-    description: description.value,
-    timestamp: new Date().toISOString()
+    // moodValue: selectedMood.value,
+    text: description.value,
+    // timestamp: new Date().toISOString()
   };
+
+  const res = api.post('/diary', newEntry)
+    .then(response => {
+      console.log('Registro salvo com sucesso:', response.data);
+      // historyStore.se(newEntry);
+    })
+    .catch(error => {
+      console.error('Erro ao salvar registro:', error);
+    });
+
+  console.log(res);
   
-  // Verificar se já existe uma entrada para hoje
-  const todayEntry = entries.value.findIndex(e => e.date === newEntry.date);
-  let updatedEntries = [...entries.value];
-  if (todayEntry !== -1) {
-    // Atualiza a entrada existente
-    updatedEntries[todayEntry] = newEntry;
-  } else {
-    // Adiciona nova entrada no início
-    updatedEntries.unshift(newEntry);
-  }
-  historyStore.setEntrie(updatedEntries);
+  
+  // // Verificar se já existe uma entrada para hoje
+  // const todayEntry = entries.value.findIndex(e => e.date === newEntry.date);
+  // let updatedEntries = [...entries.value];
+  // if (todayEntry !== -1) {
+  //   // Atualiza a entrada existente
+  //   updatedEntries[todayEntry] = newEntry;
+  // } else {
+  //   // Adiciona nova entrada no início
+  //   updatedEntries.unshift(newEntry);
+  // }
+  // historyStore.setEntrie(updatedEntries);
   
   // Limpar formulário
   selectedMood.value = '';

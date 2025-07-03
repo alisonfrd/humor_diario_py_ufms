@@ -1,4 +1,5 @@
 // src/services/axios.js
+import { useUserStore } from '@/store/useUserStore'
 import axios from 'axios'
 
 // Cria instância com baseURL
@@ -10,7 +11,9 @@ const api = axios.create({
 // Intercepta a requisição e adiciona token (ex: da store ou localStorage)
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
+    const userStore = useUserStore();
+    const token = userStore.getToken;
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

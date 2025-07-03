@@ -35,7 +35,7 @@
         </div>
 
         <div class="px-6 pb-6">
-          <form @submit.prevent="handleSubmit" class="space-y-4">
+          <div class="space-y-4">
              <div v-if="step === 2" class="space-y-2">
               <label for="name" class="text-gray-200 font-medium">Nome</label>
               <input
@@ -73,10 +73,10 @@
             </div>
 
             <button
-              type="submit"
               class="w-full bg-gradient-to-r from-purple-500 to-purple-700/30 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2.5 transition-all duration-200 rounded cursor-pointer"
               style="margin-top: 12px;"
               :disabled="isLoading"
+              @click="handleSubmit"
             >
               <div v-if="isLoading" class="flex items-center gap-2 justify-center">
                 <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -87,7 +87,7 @@
                 Entrar
               </div>
             </button>
-          </form>
+          </div>
 
           <div class="mt-6 text-center space-y-3" style="margin: 16px 0 16px 0">
             <!-- <button class="text-sm text-purple-300 hover:text-purple-200 transition-colors">
@@ -121,8 +121,10 @@ import { ref } from "vue"
 import { Heart, Sparkles, Sun } from "lucide-vue-next"
 import { useRouter } from 'vue-router'
 import api from '@/services/axios'
+import { useUserStore } from "@/store/useUserStore"
 
 const router = useRouter()
+const userStore = useUserStore()
   
 const email = ref("")
 const password = ref("")
@@ -147,7 +149,6 @@ const changeMessage = () => {
 
 const handleSubmit = async () => {
   isLoading.value = true
-  await new Promise(resolve => setTimeout(resolve, 1500))
   const endpoint = step.value === 1 ? '/auth/login' : '/auth/register'
 
   try {
@@ -156,11 +157,17 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value
     })
-    console.log(response.data)
 
-    if(response.data){
+    if(response.data?.access_token) {
+      console.log('oi');
+      
+      userStore.setToken(response.data.access_token)
+      console.log('Token armazenado:', userStore.getToken);
+      
+      console.log(router);
+      
+      router.push('/Home')
       isLoading.value = false
-      window.location.href = '/'
     }
   } catch (err) {
     console.error(err)

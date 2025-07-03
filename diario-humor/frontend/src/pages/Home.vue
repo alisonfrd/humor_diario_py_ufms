@@ -33,6 +33,7 @@ import ModalEntries from "../components/ModalEntries.vue";
 import RegisterMood from "../components/RegisterMood.vue";
 import Header from "../components/Header.vue";
 import { useHistoryStore } from '@/store/useHistoryStore';
+import api from '@/services/axios';
 
 // Estado
 const historyStore = useHistoryStore();
@@ -50,11 +51,21 @@ function viewEntry(entry) {
 }
 
 // Carregar dados do localStorage ao iniciar
-onMounted(() => {
-  const savedEntries = localStorage.getItem('moodEntries');
-
-  if (savedEntries) {
-    historyStore.setEntrie(JSON.parse(savedEntries));
-  }
+onMounted(async () => {
+  await getEntries();
 });
+
+async function getEntries() {
+  try {
+    const res = await api.get('/diary')
+
+    console.log(res.data);
+    if(res.data){
+      
+      historyStore.setEntries(res.data);
+    }
+  } catch (error) {
+    console.error("Erro ao carregar entradas:", error);
+  }
+}
 </script>
