@@ -1,29 +1,37 @@
-import { defineStore } from "pinia"
-import {ref, computed} from 'vue'
+// src/store/useHistoryStore.ts
+
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 export const useHistoryStore = defineStore('history', () => {
-    const config = ref({
-        entries: [],
-        viewingEntrie: null
-    })
+  const entries = ref([])
+  const viewingEntry = ref(null)
 
-    const getEntries = computed(() => config.value.entries);
-    const getViewingEntrie = computed(() => config.value.viewingEntrie);
+  const getEntries = computed(() => entries.value)
+  const getViewingEntrie = computed(() => viewingEntry.value)
 
-    function setEntrie(entrie: any) {
-        config.value.entries = entrie
-        localStorage.setItem('moodEntries', JSON.stringify(entrie));
-    }
+  function setEntries(newEntries) {
+    entries.value = newEntries
+  }
 
-    function viewingEntrie(entrie: any){
-        config.value.viewingEntrie = entrie;
-    }
+  function addEntry(entry) {
+    entries.value.unshift(entry)
+  }
 
-    function removeEntrie(id: number){
-        const indexEntrie = config.value.entries.findIndex((item) => item.id === id);
-        config.value.entries.splice(indexEntrie, 1)
-        localStorage.setItem('moodEntries', JSON.stringify(config.value.entries));
-    }
+  function removeEntrie(id) {
+    entries.value = entries.value.filter(e => e.id !== id)
+  }
 
-  return { getEntries, getViewingEntrie, setEntrie, viewingEntrie, removeEntrie}
+  function viewingEntrie(entry) {
+    viewingEntry.value = entry
+  }
+
+  return {
+    getEntries,
+    getViewingEntrie,
+    setEntries,
+    addEntry,
+    removeEntrie,
+    viewingEntrie
+  }
 })
