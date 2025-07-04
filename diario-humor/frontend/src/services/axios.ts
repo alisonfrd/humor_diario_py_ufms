@@ -1,4 +1,5 @@
 // src/services/axios.js
+import { useToastStore } from '@/store/useToastStore'
 import axios from 'axios'
 
 const api = axios.create({
@@ -20,6 +21,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if(error.response && error.response.data && error.response.data.error) {
+      const toastStore = useToastStore();
+      
+      toastStore.addToast({
+        type: 'error',
+        title: 'Erro',
+        description: error.response.data.error,
+        duration: 3000
+      })
+    }
+
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('access_token')
       window.location.href = '/login'

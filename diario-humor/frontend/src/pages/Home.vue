@@ -6,7 +6,7 @@
     <!-- Main -->
     <main class="container mx-auto flex-grow p-4 md:p-6">
       <!-- Registro -->
-      <RegisterMood />
+      <RegisterMood @atualizar-historico="getEntries" />
 
       <!-- Histórico -->
       <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-purple-700/30">
@@ -66,7 +66,7 @@ async function getEntries() {
       historyStore.setEntries(normalized);
     }
   } catch (error) {
-    console.error("Erro ao carregar entradas:", error);
+    // console.error("Erro ao carregar entradas:", error);
   }
 }
 </script>

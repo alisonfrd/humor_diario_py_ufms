@@ -44,6 +44,7 @@ import { computed, ref } from 'vue';
 import api from '@/services/axios';
 
 const historyStore = useHistoryStore();
+const emit = defineEmits(['atualizarHistorico']);
 
 const moods = [
   { value: 'feliz', emoji: '😄' },
@@ -74,23 +75,8 @@ async function saveEntry() {
   };
 
   try {
-    const response = await api.post('/diary/', newEntry);
-    console.log('Registro salvo com sucesso:', response.data);
-
-    // Atualiza store (evita duplicidade para o mesmo dia)
-    const filtered = entries.value.filter(e => e.date !== today);
-    const updated = [
-      {
-        ...newEntry,
-        date: today,
-        description: newEntry.text,
-        created_at: new Date().toISOString(),
-        id: Date.now() // opcionalmente usar ID da API
-      },
-      ...filtered
-    ];
-
-    historyStore.setEntries(updated);
+    await api.post('/diary/', newEntry);
+    emit('atualizarHistorico', true);
 
     // Limpa campos
     selectedMood.value = '';

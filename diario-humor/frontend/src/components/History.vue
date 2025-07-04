@@ -15,7 +15,7 @@
                 <span class="text-xl">{{ entry.mood }}</span>
                 <span class="text-sm text-purple-300">{{ formatEntryDate(entry.date) }}</span>
               </div>
-              <button @click.stop="deleteEntry(entry.id)" class="text-gray-400 hover:text-red-400">
+              <button @click.stop="deleteEntry(entry.id)" class="cursor-pointer text-gray-400 hover:text-red-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
               </button>
             </div>
@@ -28,6 +28,8 @@
 <script setup lang="ts">
 import { useHistoryStore } from '@/store/useHistoryStore';
 import { ref, computed } from 'vue'
+import api from '@/services/axios';
+import { useToastStore } from '@/store/useToastStore';
 
 const emit = defineEmits(['viewEntry']);
 
@@ -43,24 +45,28 @@ function formatEntryDate(dateString) {
   });
 }
 
-function deleteEntry(id: number) {
+async function deleteEntry(id: number) {
   historyStore.removeEntrie(id);
-  // const  = entries.value.filter(entry => entry.id !== id);
- 
-  
-  // if (viewingEntry.value && viewingEntry.value.id === id) {
-  //   viewingEntry.value = null;
-  // }
+  const toastStore = useToastStore();
+
+    try {
+      await api.delete(`/diary/${id}`);
+
+      toastStore.addToast({
+        type: 'success',
+        title: 'Entrada excluída!',
+        duration: 3000
+    })
+  } catch (error) {
+    // toastStore.addToast({
+    //     type: 'error',
+    //     title: 'Erro ao excluir entrada',
+    //     duration: 3000
+    // })
+  }
 }
 
 function viewEntry(entrie){
   emit('viewEntry', entrie)
 }
-
-// interface Config {
-//     entries: []
-// }
-
-// const props = defineProps<Config>();
-
 </script>
