@@ -75,7 +75,7 @@ function saveEntry() {
     // timestamp: new Date().toISOString()
   };
 
-  const res = api.post('/diary', newEntry)
+  const res = api.post('/diary/', newEntry)
     .then(response => {
       console.log('Registro salvo com sucesso:', response.data);
       // historyStore.se(newEntry);

@@ -1,16 +1,23 @@
 import { defineStore } from "pinia"
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-    const config = ref({
-        token: '',
-    })
+  // Carrega o token salvo (se existir)
+  const config = ref({
+    token: localStorage.getItem('access_token') || ''
+  })
 
-    const getToken = computed(() => config.value.token);
+  const getToken = computed(() => config.value.token)
 
-    function setToken(token: string) {
-        config.value.token = token
-    }
+  function setToken(token: string) {
+    config.value.token = token
+    localStorage.setItem('access_token', token)
+  }
 
-  return { getToken, setToken}
+  function logout() {
+    config.value.token = ''
+    localStorage.removeItem('access_token')
+  }
+
+  return { getToken, setToken, logout }
 })
