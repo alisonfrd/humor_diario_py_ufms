@@ -6,11 +6,9 @@ from extensions import db, migrate, bcrypt, jwt
 
 def create_app():
     app = Flask(__name__)
-    
-    # ✅ Habilita CORS para todas as rotas e origens
-    origins = ["*"]
-    CORS(app, resources={r"/*": {"origins": origins}})
 
+    # ✅ Habilita CORS globalmente para todas as rotas e métodos
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Carrega configurações da aplicação
     app.config.from_object(Config)
@@ -21,15 +19,15 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # Importa modelos (para que o Flask-Migrate reconheça)
+    # Importa modelos
     from models import user, diary
 
-    # Registra os blueprints
+    # Importa e aplica CORS nos blueprints (antes de registrar)
     from routes.auth_routes import auth_bp
     from routes.diary_routes import diary_bp
 
-    CORS(auth_bp, origins=origins)
-    CORS(diary_bp, origins=origins)
+    CORS(auth_bp, origins="*")      # opcional se CORS(app) já cobre
+    CORS(diary_bp, origins="*")     # opcional se CORS(app) já cobre
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(diary_bp)

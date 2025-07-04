@@ -6,7 +6,7 @@
     <!-- Main -->
     <main class="container mx-auto flex-grow p-4 md:p-6">
       <!-- Registro -->
-      <RegisterMood :entries="entries" />
+      <RegisterMood :entries="entries" @atualizar-historico="getEntries" />
       
       <!-- Histórico -->
       <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-purple-700/30">
@@ -34,9 +34,11 @@ import RegisterMood from "../components/RegisterMood.vue";
 import Header from "../components/Header.vue";
 import { useHistoryStore } from '@/store/useHistoryStore';
 import api from '@/services/axios';
+import { useToastStore } from '@/store/useToastStore';
 
 // Estado
 const historyStore = useHistoryStore();
+const toastStore = useToastStore();
 
 const viewingEntry = computed(() => historyStore.getViewingEntrie);
 const entries = computed(() => historyStore.getEntries)

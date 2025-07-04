@@ -1,8 +1,27 @@
 <template>
+  <Toast />
   <div class="flex justify-center items-center">
+
     <router-view />
   </div>
 </template>
+
+<script setup>
+import Toast from './components/Toast.vue'
+import { onMounted } from 'vue'
+import { useToastStore } from '@/store/useToastStore'
+
+onMounted(() => {
+  // Teste: dispara um toast ao abrir o app
+  const toastStore = useToastStore()
+  toastStore.addToast({
+    type: 'success',
+    title: 'Seja bem-vindo!',
+    description: 'Aproveite o Diário do Humor para registrar suas emoções diárias.',
+    duration: 3000
+  })
+})
+</script>
 
 <style scoped>
 header {

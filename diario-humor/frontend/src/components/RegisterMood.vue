@@ -44,6 +44,7 @@ import { computed, ref } from 'vue'
 import api from '@/services/axios';
 
 const historyStore = useHistoryStore();
+const emit = defineEmits(['atualizarHistorico']);
 // Lista de humores disponíveis
 const moods = [
   { value: 'feliz', emoji: '😄', color: 'bg-yellow-500' },
@@ -79,6 +80,7 @@ function saveEntry() {
     .then(response => {
       console.log('Registro salvo com sucesso:', response.data);
       // historyStore.se(newEntry);
+      emit('atualizarHistorico', true);
     })
     .catch(error => {
       console.error('Erro ao salvar registro:', error);
